@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Bản đồ số các cơ sở lưu trú theo dữ liệu khảo sát Nhóm 4.">
+<title>Bản đồ số cơ sở lưu trú – Nhóm 4</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{--bg:#091525;--panel:#10243a;--panel2:#172f48;--line:#2b4862;--ink:#edf7ff;--muted:#a8c0d2;--mint:#51e0c9}
+*{box-sizing:border-box}html,body{margin:0;height:100%;font:14px/1.45 system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}button,input,select{font:inherit}button{cursor:pointer}
+.app{height:100dvh;display:grid;grid-template-rows:74px 1fr}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 22px;background:linear-gradient(110deg,#0b1728,#16334b);border-bottom:1px solid var(--line);z-index:500}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#51e0c9,#4c99dc);display:grid;place-items:center;font-size:25px}.title{font-size:18px;font-weight:850}.sub{font-size:11px;color:var(--muted)}.stats{display:flex;gap:9px}.stat{padding:7px 12px;border:1px solid #34516a;border-radius:11px;background:#142b42}.stat b{color:var(--mint);font-size:18px;margin-right:5px}
+.main{display:grid;grid-template-columns:365px minmax(0,1fr);min-height:0}.side{display:flex;flex-direction:column;min-height:0;background:linear-gradient(#102137,#0b192a);border-right:1px solid var(--line)}.sidehead{padding:18px 15px 12px;border-bottom:1px solid var(--line)}.eyebrow{font-size:10px;letter-spacing:1.8px;color:var(--mint);font-weight:800}.side h2{font-size:20px;margin:7px 0}.intro{font-size:11px;color:var(--muted);margin:0 0 12px}.search{width:100%;padding:12px;border:1px solid #3b5871;border-radius:11px;background:#172e45;color:white;outline-color:var(--mint)}.filters{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:9px}.filters button{border:1px solid #34516a;border-radius:9px;background:#142a41;color:#d7e8f4;padding:8px;font-size:11px;text-align:left}.filters button.active{border-color:var(--mint);background:#12414a}.filters .all{grid-column:1/-1;text-align:center}.listhead{display:flex;justify-content:space-between;padding:12px 15px;color:var(--muted);font-size:11px}.list{overflow:auto;padding:0 9px 15px;min-height:0}.item{width:100%;display:grid;grid-template-columns:90px 1fr;gap:10px;padding:7px;margin-bottom:8px;text-align:left;color:var(--ink);background:#142940;border:1px solid #2e4961;border-radius:12px}.item.active{border-color:var(--mint);background:#19404a}.thumb{height:76px;width:90px;object-fit:cover;border-radius:8px;background:#24455e}.item strong{display:block;font-size:12px;line-height:1.35}.item small{display:block;color:var(--muted);font-size:10px;margin-top:5px}.sidefoot{font-size:10px;color:var(--muted);padding:10px 14px;border-top:1px solid var(--line)}
+.maparea{position:relative;min-width:0;min-height:0}#map{height:100%;width:100%;background:#10283d}.maptools{position:absolute;top:14px;left:14px;right:14px;z-index:450;display:flex;justify-content:space-between;gap:8px;pointer-events:none}.maptools>*{pointer-events:auto}.maptools select,.maptools button{border:1px solid #58748a;border-radius:10px;background:#10253bed;color:#f2fbff;padding:10px}.summary{position:absolute;z-index:450;left:14px;bottom:20px;background:#0b2035ed;border:1px solid #47667e;border-radius:12px;padding:11px 13px;max-width:calc(100% - 28px);font-size:12px;pointer-events:none}.summary small{display:block;color:#b4ccdc;margin-top:3px}
+.detail{position:absolute;z-index:600;top:10px;right:10px;bottom:10px;width:min(420px,calc(100% - 20px));background:#10243a;border:1px solid #45647c;border-radius:16px;box-shadow:0 12px 40px #0008;overflow:auto;transform:translateX(calc(100% + 20px));transition:transform .2s}.detail.open{transform:translateX(0)}.close{position:sticky;float:right;top:8px;margin:8px 8px -44px 0;z-index:2;border:1px solid #ffffff66;border-radius:9px;background:#081b2ddd;color:white;font-size:22px;width:36px;height:36px}.hero{width:100%;height:220px;object-fit:cover;background:#284960}.pad{padding:16px 18px 24px}.badge{display:inline-block;background:#173b4b;border:1px solid #3b6c7a;border-radius:7px;padding:4px 7px;color:#b9f1e8;font-size:10px;margin:0 5px 5px 0}.pad h2{font-size:21px;line-height:1.25;margin:8px 0}.address{font-size:11px;color:var(--muted)}.warning{margin:10px 0;padding:9px 10px;border-radius:8px;background:#3b301f;border:1px solid #8a7149;color:#ffe4b5;font-size:11px}.description{font-size:12px;line-height:1.7;color:#d9e8f2;white-space:pre-line}.price{padding:11px;background:#18364a;border-radius:10px;margin:12px 0}.price b{display:block;color:var(--mint);font-size:15px}.section{font-size:12px;color:var(--mint);font-weight:850;margin:17px 0 4px}.field{padding:9px 0;border-top:1px solid #2a4359}.field b{display:block;color:#9ebbd0;font-size:10px;margin-bottom:3px}.field span{font-size:12px;white-space:pre-line}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:13px 0}.actions a{display:block;text-align:center;text-decoration:none;background:var(--mint);color:#072a31;font-weight:800;font-size:11px;padding:11px 6px;border-radius:9px}.actions a.secondary{background:#1a354b;border:1px solid #47667c;color:#e9f7ff}.gallery{display:flex;gap:6px;margin-top:8px}.gallery img{width:31%;height:72px;object-fit:cover;border-radius:7px;cursor:pointer}.leaflet-popup-content-wrapper{border-radius:12px}.marker{width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#45d8c4;border:2px solid white;box-shadow:0 2px 8px #0007}.marker span{display:block;transform:rotate(45deg);font-size:9px;color:#062b30;text-align:center;font-weight:900;line-height:22px}
+@media(max-width:760px){.app{grid-template-rows:65px 1fr}.top{padding:7px 10px}.logo{width:40px;height:40px}.title{font-size:13px}.sub{font-size:9px}.stats{display:none}.main{display:block}.maparea{position:absolute;inset:65px 0 0}.side{position:absolute;z-index:500;left:9px;right:9px;bottom:9px;height:min(62dvh,580px);border:1px solid #496980;border-radius:15px;box-shadow:0 10px 35px #0009;transform:translateY(calc(100% + 20px));transition:transform .2s;overflow:hidden}.side.mobile-open{transform:translateY(0)}.sidehead{padding:11px}.side h2{font-size:16px;margin:4px 0}.intro{display:none}.filters button{padding:6px}.list{padding-bottom:10px}.maptools{top:9px;left:9px;right:9px}.maptools select{max-width:calc(100% - 94px);font-size:11px}.maptools button{padding:9px}.summary{bottom:18px;left:9px}.detail{top:auto;bottom:8px;left:8px;right:8px;width:auto;height:min(78dvh,680px);transform:translateY(calc(100% + 20px))}.hero{height:180px}}
+</style>
+</head>
+<body><div class="app">
+<header class="top"><div class="brand"><div class="logo">📍</div><div><div class="title">Bản đồ số cơ sở lưu trú – Nhóm 4</div><div class="sub">Dữ liệu từ Excel và bộ ảnh Nhóm 4 cung cấp</div></div></div><div class="stats"><div class="stat"><b id="total">22</b> cơ sở</div><div class="stat"><b>04</b> nhóm yêu cầu</div></div></header>
+<main class="main"><aside id="side" class="side"><div class="sidehead"><div class="eyebrow">DIGITAL ACCOMMODATION MAP</div><h2>Khám phá cơ sở lưu trú</h2><p class="intro">Chọn cơ sở trong danh sách hoặc ghim trên bản đồ để xem dữ liệu Excel và ảnh Nhóm 4.</p><input id="search" class="search" placeholder="Tìm tên, mã, địa chỉ, tiện ích…" type="search"><div id="filters" class="filters"></div></div><div class="listhead"><b id="count">22 địa điểm</b><span>Nhóm 4 • dữ liệu Excel</span></div><div id="list" class="list"></div><div class="sidefoot">Dữ liệu phục vụ bài tập học phần. Hãy kiểm tra tọa độ, nhóm yêu cầu, loại hình thực tế và hạng sao trước khi công bố.</div></aside>
+<section class="maparea"><div id="map"></div><div class="maptools"><select id="groupSelect" aria-label="Lọc nhóm"></select><div><button id="reset" title="Hiện tất cả">⌂</button> <button id="theme" title="Đổi giao diện bản đồ">☼</button> <button id="mobile" title="Mở danh sách">☰</button></div></div><div class="summary"><b><span id="mapCount">22</span> địa điểm đang hiển thị</b><small>Ghim sử dụng tọa độ nguyên trạng trong Excel.</small></div><aside id="detail" class="detail" aria-label="Chi tiết cơ sở"><button id="close" class="close" aria-label="Đóng">×</button><div id="detailBody"></div></aside></section></main></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="du_lieu.js"></script>
+<script>
+'use strict';
+const $=id=>document.getElementById(id), P=Array.isArray(window.HOIAN_PLACES)?window.HOIAN_PLACES:[];
+const GROUPS=['Khách sạn/Resort 5 sao','Khách sạn 4 sao','Khách sạn 3 sao','Homestay'];
+const COLORS={'Khách sạn/Resort 5 sao':'#f4bd6c','Khách sạn 4 sao':'#66b8ff','Khách sạn 3 sao':'#c4a0ff','Homestay':'#50dfbd'};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>String(s??'').toLocaleLowerCase('vi').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d');
+let activeGroup='all',term='',selected=null,dark=true;
+const map=L.map('map',{zoomControl:true}).setView([16.06,108.23],11);
+const tile=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap contributors © CARTO',subdomains:'abcd',maxZoom:20}).addTo(map);
+const markers=new Map();
+function photo(p){return p.photos&&p.photos.length?p.photos[0]:'';
+}
+function markerIcon(p){return L.divIcon({className:'',html:`<div class="marker" style="background:${COLORS[p.group]||'#50dfbd'}"><span>${esc(p.id.slice(-2))}</span></div>`,iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-25]});}
+function searchable(p){return norm([p.id,p.name,p.group,p.type,p.stars,p.address,p.description,p.nearby,p.amenities,p.rooms,p.food].join(' ')).includes(norm(term));}
+function visible(){return P.filter(p=>(activeGroup==='all'||p.group===activeGroup)&&searchable(p));}
+function init(){
+  $('total').textContent=P.length;
+  const filters=[['all','Tất cả địa điểm'],...GROUPS.map(g=>[g,g])];
+  $('filters').innerHTML=filters.map(([g,label])=>`<button class="${g==='all'?'all ':''}${g===activeGroup?'active':''}" data-filter="${esc(g)}">${esc(label)} <b>(${g==='all'?P.length:P.filter(p=>p.group===g).length})</b></button>`).join('');
+  $('groupSelect').innerHTML=filters.map(([g,label])=>`<option value="${esc(g)}">${esc(label)}</option>`).join('');
+  $('filters').querySelectorAll('button').forEach(b=>b.onclick=()=>setGroup(b.dataset.filter));
+  P.forEach(p=>{
+    if(!Number.isFinite(p.lat)||!Number.isFinite(p.lng))return;
+    const m=L.marker([p.lat,p.lng],{icon:markerIcon(p)}).bindPopup(`<b>${esc(p.name)}</b><br>${esc(p.id)} · ${esc(p.group)}`);
+    m.on('click',()=>openDetail(p));markers.set(p.id,m);
+  });
+  update();
+}
+function setGroup(g){activeGroup=g;$('groupSelect').value=g;$('filters').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.filter===g));update();}
+function update(){
+  const ps=visible(), ids=new Set(ps.map(p=>p.id));
+  $('list').innerHTML=ps.length?ps.map(p=>`<button class="item ${selected===p.id?'active':''}" data-id="${esc(p.id)}"><img class="thumb" src="${esc(photo(p))}" alt="" onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%2280%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23244860%22/%3E%3Ctext x=%2250%25%22 y=%2255%25%22 fill=%22white%22 text-anchor=%22middle%22 font-size=%2212%22%3E${encodeURIComponent(p.id)}%3C/text%3E%3C/svg%3E'"><span><strong>${esc(p.name)}</strong><small>${esc(p.id)} · ${esc(p.group)}<br>${esc(p.address)}</small></span></button>`).join(''):'<div style="padding:25px;text-align:center;color:#adc4d5">Không tìm thấy cơ sở phù hợp.</div>';
+  $('list').querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>focusPlace(P.find(p=>p.id===b.dataset.id)));
+  markers.forEach((m,id)=>{if(ids.has(id)){if(!map.hasLayer(m))m.addTo(map);}else if(map.hasLayer(m))map.removeLayer(m);});
+  $('count').textContent=ps.length+' địa điểm';$('mapCount').textContent=ps.length;
+}
+function focusPlace(p){if(!p)return;selected=p.id;update();if(Number.isFinite(p.lat)&&Number.isFinite(p.lng)){map.setView([p.lat,p.lng],Math.max(map.getZoom(),14));markers.get(p.id)?.openPopup();}openDetail(p);$('side').classList.remove('mobile-open');}
+function openDetail(p){
+  selected=p.id;
+  const photos=(p.photos||[]).map((src,i)=>`<img src="${esc(src)}" alt="Ảnh ${i+1} của ${esc(p.name)}" onclick="document.getElementById('heroImg').src=this.src" onerror="this.style.display='none'">`).join('');
+  const field=(label,value)=>value?`<div class="field"><b>${esc(label)}</b><span>${esc(value)}</span></div>`:'';
+  const warning=[];
+  if(p.warnings)warning.push(p.warnings);
+  if(p.excelGroupCheck && /sai|không|lỗi|cảnh báo/i.test(p.excelGroupCheck))warning.push('Kiểm tra nhóm trong Excel: '+p.excelGroupCheck);
+  if(p.coordinateCheck && /sai|không|lỗi|cảnh báo/i.test(p.coordinateCheck))warning.push('Kiểm tra tọa độ trong Excel: '+p.coordinateCheck);
+  $('detailBody').innerHTML=`<img id="heroImg" class="hero" src="${esc(photo(p))}" alt="Ảnh ${esc(p.name)}" onerror="this.style.visibility='hidden'"><div class="pad"><span class="badge">${esc(p.id)}</span><span class="badge">${esc(p.group)}</span><span class="badge">Loại thực tế: ${esc(p.type||'Chưa ghi')}</span><span class="badge">Hạng sao: ${esc(p.stars||'Chưa ghi')}</span><h2>${esc(p.name)}</h2><p class="address">${esc(p.address)}</p>${warning.length?`<div class="warning">${warning.map(esc).join('<br>')}</div>`:''}<p class="description">${esc(p.description)}</p><div class="gallery">${photos}</div>${p.price?`<div class="price"><small>Giá tham khảo theo Excel</small><b>${esc(p.price)}</b><small>${esc(p.priceSource)}</small></div>`:''}<div class="section">Thông tin khảo sát chi tiết</div>${field('Khu vực lân cận / điểm kết nối',p.nearby)}${field('Loại phòng phổ biến',p.rooms)}${field('Tiện ích chính',p.amenities)}${field('Nhà hàng / F&B',p.food)}${field('Hồ bơi / Spa / Gym',p.wellness)}${field('Hội nghị / Sự kiện',p.events)}${field('Bãi đỗ xe / Khả năng tiếp cận',p.parking)}${field('Thực hành xanh quan sát được',p.green)}${field('Đối tượng khách',p.audience)}${field('Điểm nổi bật quan sát',p.highlights)}${field('Điểm hạn chế / Ghi chú',p.limitations)}${field('Tên tệp ảnh theo Excel', (p.photoRefs||[]).join(' · '))}<div class="actions"><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(p.lat+','+p.lng)}">Chỉ đường tới tọa độ</a><a class="secondary" target="_blank" rel="noopener" href="${/^https?:\/\//i.test(p.mapsLink)?esc(p.mapsLink):'#'}">Mở Google Maps gốc</a></div><div class="address">Ảnh được lấy từ thư mục ảnh Nhóm 4. Giá và mô tả là dữ liệu nguồn, chưa được xác minh độc lập.</div></div>`;
+  $('detail').classList.add('open');update();
+}
+$('search').addEventListener('input',e=>{term=e.target.value;update();});
+$('groupSelect').addEventListener('change',e=>setGroup(e.target.value));
+$('reset').onclick=()=>{term='';$('search').value='';setGroup('all');if(P.length){const pts=P.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lng));if(pts.length)map.fitBounds(L.latLngBounds(pts.map(p=>[p.lat,p.lng])),{padding:[25,25]});}};
+$('close').onclick=()=>{$('detail').classList.remove('open');selected=null;update();};
+$('theme').onclick=()=>{dark=!dark;tile.setUrl(dark?'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png':'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png');$('theme').textContent=dark?'☼':'☀';};
+$('mobile').onclick=()=>$('side').classList.toggle('mobile-open');
+init();
+const valid=P.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lng));
+if(valid.length){map.fitBounds(L.latLngBounds(valid.map(p=>[p.lat,p.lng])),{padding:[25,25]});}
+</script></body></html>
